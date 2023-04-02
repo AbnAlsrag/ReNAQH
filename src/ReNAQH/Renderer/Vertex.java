@@ -12,8 +12,9 @@ public class Vertex {
 		
 	}
 
-	public Vertex(Vector3 position) {
+	public Vertex(Vector3 position, Vector2 uvCoords) {
 		this.position = position;
+		this.uvCoords = uvCoords;
 	}
 
 	public void SetPosition(Vector3 position) {

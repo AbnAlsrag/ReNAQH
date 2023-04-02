@@ -1,6 +1,6 @@
 #version 400 core
 
-in vec2 pos;
+in vec3 pos;
 
 uniform sampler2D texture1;
 

@@ -1,0 +1,18 @@
+<DocType>Shader</DocType>
+<Shader Id=0>
+	<Data>
+		vec3 aPos
+	</Data>
+	<Global>
+		mat4 transform,
+		texture2D texture1
+	</Global>
+	<Script>
+		<Vertex>
+			VERTEX_POSITION = vec4(aPos, 1.0);
+		</Vertex>
+		<Fragment>
+			FRAGMENT_COLOR = texture(texture1, vec2(aPos));
+		</Fragment>
+	</Script>
+</Shader>

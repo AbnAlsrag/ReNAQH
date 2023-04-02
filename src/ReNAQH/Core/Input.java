@@ -1,5 +1,9 @@
 package ReNAQH.Core;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.ByteBuffer;
+import java.nio.FloatBuffer;
+
 import org.lwjgl.glfw.GLFW;
 import ReNAQH.Math.Vector2;
 
@@ -139,19 +143,65 @@ public class Input {
     public static final int BUTTON_Left   = 0;
     public static final int BUTTON_Right  = 1;
     public static final int BUTTON_Middle = 2;
-	
-    private static final int keysNum = 349, buttonsNum = 8;
+    
+    public static final int GAMEPAD_A = 0;
+    public static final int GAMEPAD_B = 1;
+    public static final int GAMEPAD_X = 2;
+    public static final int GAMEPAD_Y = 3;
+    public static final int GAMEPAD_LEFT_BUMPER = 4;
+    public static final int GAMEPAD_RIGHT_BUMPER = 5;
+    public static final int GAMEPAD_BACK = 6;
+    public static final int GAMEPAD_START = 7;
+    public static final int GAMEPAD_GUIDE = 8;
+    public static final int GAMEPAD_LEFT_THUMP = 9;
+    public static final int GAMEPAD_RIGHT_THUMP = 10;
+    public static final int GAMEPAD_DPAD_UP = 11;
+    public static final int GAMEPAD_DPAD_RIGHT = 12;
+    public static final int GAMEPAD_DPAD_DOWN = 13;
+    public static final int GAMEPAD_DPAD_LEFT = 14;
+    
+    public static final int GAMEPAD_1 = 0;
+    public static final int GAMEPAD_2 = 1;
+    public static final int GAMEPAD_3 = 2;
+    public static final int GAMEPAD_4 = 3;
+    public static final int GAMEPAD_5 = 4;
+    public static final int GAMEPAD_6 = 5;
+    public static final int GAMEPAD_7 = 6;
+    public static final int GAMEPAD_8 = 7;
+    public static final int GAMEPAD_9 = 8;
+    public static final int GAMEPAD_10 = 9;
+    public static final int GAMEPAD_11 = 10;
+    public static final int GAMEPAD_12 = 11;
+    public static final int GAMEPAD_13 = 12;
+    public static final int GAMEPAD_14 = 13;
+    public static final int GAMEPAD_15 = 14;
+    public static final int GAMEPAD_16 = 15;
+    
+    public static final int GAMEPAD_AXIS_LEFT = 0;
+    public static final int GAMEPAD_AXIS_RIGHT = 1;
+    public static final int GAMEPAD_AXIS_TRIGGER_LEFT = 2;
+    public static final int GAMEPAD_AXIS_TRIGGER_RIGHT = 3;
+    
+    
+    final String map = "030000004c050000c405000000010000,PS4 Controller,platform:Windows,a:b3,b:b2,back:b8,dpdown:h0.4,dpleft:h0.8,dpright:h0.2,dpup:h0.1,guide:b12,leftshoulder:b4,leftstick:b10,lefttrigger:a3,leftx:a0,lefty:a1,rightshoulder:b5,rightstick:b11,righttrigger:a4,rightx:a2,righty:a5,start:b9,x:b4,y:b1,";
+    private static final int keysNum = 349, buttonsNum = 8, gamepadButtonsNum = 15, gamepadNum = 16;
     
 	private static Input instance;
 	private static boolean[] keys = new boolean[keysNum], lastKeys = new boolean[keysNum];
 	private static boolean[] buttons = new boolean[buttonsNum], lastButtons = new boolean[buttonsNum];
+	private static boolean[][] gamepads = new boolean[gamepadNum][gamepadButtonsNum+1], lastGamepads = new boolean[gamepadNum][gamepadButtonsNum+1];
+	private static FloatBuffer[] gamepadAxis = new FloatBuffer[gamepadNum];
 	private static boolean isDragging;
 	
 	private static Vector2 mousePos = new Vector2(), lastMousePos = new Vector2(), deltaMousePos = new Vector2(), mouseScroll = new Vector2();
 	
 	private Input()
 	{
-		
+		try {
+			GLFW.glfwUpdateGamepadMappings(ByteBuffer.wrap(map.getBytes("UTF-8")));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	protected void finalize() {
@@ -171,12 +221,40 @@ public class Input {
 	}
 	
 	public static void Update() {
-		for(int i = 0; i < keys.length; i++) {
+		for(int i = 0; i < keysNum; i++) {
 			lastKeys[i] = keys[i];
 		}
 		
-		for(int i = 0; i < buttons.length; i++) {
+		for(int i = 0; i < buttonsNum; i++) {
 			lastButtons[i] = buttons[i];
+		}
+		
+		for(int y = 0; y < gamepadNum; y++) {
+			for(int x = 0; x < gamepadButtonsNum+1; x++) {
+				lastGamepads[y][x] = gamepads[y][x];
+			}
+		}
+		
+		for(int i = 0; i < gamepadNum; i++) {
+			gamepads[i][0] = GLFW.glfwJoystickPresent(i);
+			
+			if(gamepads[i][0]) {
+				gamepadAxis[i] = GLFW.glfwGetJoystickAxes(i);
+				ByteBuffer buttonsData = GLFW.glfwGetJoystickButtons(i);
+				
+				for(int j = 0; j < gamepadButtonsNum; j++) {
+					gamepads[i][j+1] = (buttonsData.get(j) != GLFW.GLFW_RELEASE);
+				}
+				
+				for(int j = 0; j < gamepadAxis[i].capacity(); j++) {
+					if(gamepadAxis[i].get(j) == -0.0077973604f) {
+						gamepadAxis[i].put(j, 0);
+					}
+					else if(gamepadAxis[i].get(j) == 1.5259022E-5f) {
+						gamepadAxis[i].put(j, 0);
+					}
+				}
+			}
 		}
 		
 		deltaMousePos.Set(lastMousePos.x - mousePos.x, lastMousePos.y - mousePos.y);
@@ -243,6 +321,51 @@ public class Input {
 	
 	public static Vector2 GetMousScroll() {
 		return mouseScroll;
+	}
+	
+	public static boolean IsGamepadActive(int gamepad) {
+		if(gamepad < gamepadNum)
+			return gamepads[gamepad][0];
+	
+		return false;
+	}
+	
+	public static boolean IsGamepadButtonPressed(int gamepad, int button) {
+		if(gamepad < gamepadNum && button < gamepadButtonsNum)
+			return !lastGamepads[gamepad][button+1] && gamepads[gamepad][button+1];
+	
+		return false;
+	}
+	
+	public static boolean IsGamepadButtonDown(int gamepad, int button) {
+		if(gamepad < gamepadNum && button < gamepadButtonsNum)
+			return lastGamepads[gamepad][button+1] && gamepads[gamepad][button+1];
+	
+		return false;
+	}
+	
+	public static boolean IsGamepadButtonReleased(int gamepad, int button) {
+		if(gamepad < gamepadNum && button < gamepadButtonsNum)
+			return lastGamepads[gamepad][button+1] && !gamepads[gamepad][button+1];
+	
+		return false;
+	}
+	
+	public static Vector2 GetGamepadAxis(int gamepad, int axis) {
+		Vector2 result = new Vector2();
+		
+		if(axis == GAMEPAD_AXIS_LEFT && gamepadAxis[gamepad] != null) {
+			result.Set(gamepadAxis[gamepad].get(0), -gamepadAxis[gamepad].get(1));
+		}
+		else if(axis == GAMEPAD_AXIS_RIGHT && gamepadAxis[gamepad] != null) {
+			result.Set(gamepadAxis[gamepad].get(2), -gamepadAxis[gamepad].get(3));
+		}
+		
+		return result;
+	}
+	
+	public static void ChangeGamepadMapping(ByteBuffer map) {
+		GLFW.glfwUpdateGamepadMappings(map);
 	}
 	
 	public static void KeyCallback(long window, int key, int scanCode, int action, int mod) {

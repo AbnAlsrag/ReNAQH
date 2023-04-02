@@ -1,5 +1,9 @@
 package ReNAQH.Renderer;
 
+import java.nio.FloatBuffer;
+
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL40;
 
 import ReNAQH.Math.Vector2;
@@ -7,7 +11,7 @@ import ReNAQH.Math.Vector3;
 import ReNAQH.Utils.FileUtils;
 
 public class Shader {
-	private String vertexSource, fragmentSource;
+	private String vertexSource, fragmentSource, shaderSource;
 	private int vertexShader, fragmentShader, shaderProgram;
 	
 	public Shader(String vertexPath, String fragmentPath) {
@@ -31,6 +35,10 @@ public class Shader {
 		GL40.glDeleteShader(fragmentShader);
 	}
 	
+	public Shader(String shaderPath) {
+		shaderSource = FileUtils.LoadFile(shaderPath);
+	}
+	
 	protected void finalize() {
 		Delete();
 	}
@@ -39,37 +47,54 @@ public class Shader {
 		GL40.glUseProgram(shaderProgram);
 	}
 	
+	public void Detach() {
+		GL40.glUseProgram(0);
+	}
+	
 	public void Delete() {
 		GL40.glDeleteProgram(shaderProgram);
 	}
 	
-	public void setBool(String name, boolean value)
+	public void SetBool(String name, boolean value)
     {
+		Use();
 		GL40.glUniform1i(GL40.glGetUniformLocation(shaderProgram, name), (value)?1:0);
     }
 
-	public void setInt(String name, int value)
+	public void SetInt(String name, int value)
     {
+		Use();
 		GL40.glUniform1i(GL40.glGetUniformLocation(shaderProgram, name), value);
     }
 
-	public void setFloat(String name, float value)
+	public void SetFloat(String name, float value)
     {
+		Use();
 		GL40.glUniform1f(GL40.glGetUniformLocation(shaderProgram, name), value);
     }
 
-//	public void setMatrix4(String name, glm::mat4 value)
-//    {
-//		GL40.glUniformMatrix4fv(GL40.glGetUniformLocation(shaderProgram, name), 1, GL_FALSE, glm::value_ptr(value));
-//    }
-
-	public void setVector3(String name, Vector3 value)
+	public void SetVector3(String name, Vector3 value)
     {
+		Use();
 		GL40.glUniform3f(GL40.glGetUniformLocation(shaderProgram, name), value.x, value.y, value.z);
     }
 
-	public void setVector2(String name, Vector2 value)
+	public void SetVector2(String name, Vector2 value)
     {
+		Use();
 		GL40.glUniform2f(GL40.glGetUniformLocation(shaderProgram, name), value.x, value.y);
+    }
+
+	public void SetMatrix4(String name, Matrix4f value) {
+		FloatBuffer matBuffer = BufferUtils.createFloatBuffer(16);
+		value.get(matBuffer);
+		
+		Use();
+		GL40.glUniformMatrix4fv(GL40.glGetUniformLocation(shaderProgram, name), false, matBuffer);
+	}
+	
+    public void SetTexture(String name, int value) {
+        Use();
+        GL40.glUniform1i(GL40.glGetUniformLocation(shaderProgram, name), value);
     }
 }

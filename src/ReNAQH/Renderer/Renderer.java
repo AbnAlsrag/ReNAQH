@@ -3,26 +3,33 @@ package ReNAQH.Renderer;
 import org.lwjgl.opengl.GL40;
 
 public class Renderer {
-	private Color backColor = new Color(1.0f, 1.0f, 1.0f);
+	private static Renderer instance;
+	private static Color backColor = new Color(1.0f, 1.0f, 1.0f);
 	
-	public Renderer() {
+	private Renderer() {
 		
+	}
+	
+	public static void Create() {
+		if(instance == null) {
+			instance = new Renderer();
+		}
 	}
 	
 	protected void finalize() {
 		Destroy();
 	}
 	
-	public void Destroy() {
+	public static void Destroy() {
 		
 	}
 	
-	public void Update() {
+	public static void Update() {
 		GL40.glClearColor(backColor.r, backColor.g, backColor.b, backColor.a);
 		GL40.glClear(GL40.GL_COLOR_BUFFER_BIT | GL40.GL_DEPTH_BUFFER_BIT);
 	}
 	
-	public void RenderMesh(Mesh mesh) {
+	public static void RenderMesh(Mesh mesh) {
 		
 		if(mesh.GetTexture() != null)
 			mesh.GetTexture().Bind(0);
@@ -38,7 +45,7 @@ public class Renderer {
 			mesh.GetTexture().UnBind();
 	}
 	
-	public void DrawColor(Color color) {
+	public static void DrawColor(Color color) {
 		if(color != null)
 			backColor = color;
 	}

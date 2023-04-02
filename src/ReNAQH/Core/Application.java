@@ -6,43 +6,46 @@ import ReNAQH.Renderer.Renderer;
 import ReNAQH.Renderer.Window;
 
 public class Application {
-	private Window window;
-	private Renderer renderer;
-
-	public Application(ApplicationSpec appSpec) {
-		window = new Window(appSpec.name, (int)appSpec.size.x, (int)appSpec.size.y);
-		renderer = new Renderer();
+	private static Application instance;
+	
+	private Application(ApplicationSpec appSpec) {
+		Window.Create(appSpec.name, (int)appSpec.size.x, (int)appSpec.size.y);
+		Renderer.Create();
+		ObjectManger.Create();
 		
-		GLFW.glfwSetKeyCallback(window.GetWindowHandel(), Input::KeyCallback);
-		GLFW.glfwSetMouseButtonCallback(window.GetWindowHandel(), Input::MouseButtonCallback);
-		GLFW.glfwSetCursorPosCallback(window.GetWindowHandel(), Input::MousePosCallback);
+		GLFW.glfwSetKeyCallback(Window.GetWindowHandel(), Input::KeyCallback);
+		GLFW.glfwSetMouseButtonCallback(Window.GetWindowHandel(), Input::MouseButtonCallback);
+		GLFW.glfwSetCursorPosCallback(Window.GetWindowHandel(), Input::MousePosCallback);
+	}
+	
+	public static void Create(ApplicationSpec appSpec) {
+		if(instance == null) {
+			instance = new Application(appSpec);
+		}
 	}
 	
 	protected void finalize() {
 		Destroy();
 	}
 	
-	public void Destroy() {
-		window.Destroy();
-		renderer.Destroy();
+	public static void Destroy() {
+		Window.Destroy();
+		Renderer.Destroy();
 
 		GLFW.glfwTerminate();
 	}
 	
-	public void Run() {
+	public static void Run() {
 		
 	}
 	
-	public void Update() {
-		renderer.Update();
+	public static void Start() {
+		ObjectManger.Start();
+	}
+	
+	public static void Update() {
+		Renderer.Update();
 		Input.Update();
-	}
-	
-	public Window GetWindow() {
-		return window;
-	}
-	
-	public Renderer GetRendere() {
-		return renderer;
+		ObjectManger.Update();
 	}
 }

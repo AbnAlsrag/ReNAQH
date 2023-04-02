@@ -12,7 +12,7 @@ public class Mesh {
 	private VertexArray vao;
 	private VertexBuffer vbo;
 	private IndexBuffer ibo;
-	private Shader shader;
+	private Material material;
 	private Texture texture;
 	private int id;
 	
@@ -26,15 +26,18 @@ public class Mesh {
 		vao = new VertexArray();
 		vbo = new VertexBuffer(vertices);
 		ibo = new IndexBuffer(indices);
-		shader = new Shader(vertexPath, fragmentPath);
+		material = new Material(vertexPath, fragmentPath);
 	}
 	
 	protected void finalize() {
-		System.out.println("Destroy");
-		shader.Delete();
+		Delete();
+	}
+	
+	public void Delete() {
+		material.Delete();
 		vao.Delete();
 		vbo.Delete();
-		ibo.Delete();
+		ibo.Delete();		
 	}
 
 	public Vertex[] GetVertices() {
@@ -58,7 +61,7 @@ public class Mesh {
 	}
 	
 	public Shader GetShader() {
-		return shader;
+		return material.GetShader();
 	}
 	
 	public void SetTexture(Texture texture) {

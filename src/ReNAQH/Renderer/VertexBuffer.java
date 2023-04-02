@@ -10,7 +10,7 @@ public class VertexBuffer {
 	
 	public VertexBuffer(Vertex[] vertices) {
 		
-		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertices.length * 3);
+		FloatBuffer vertexBuffer = MemoryUtil.memAllocFloat(vertices.length * 5);
 		float[] positionData = new float[vertices.length * 3];
 		
 		for(int i = 0; i < vertices.length; i++) {
