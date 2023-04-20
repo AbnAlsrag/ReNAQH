@@ -1,17 +1,17 @@
 package ReNAQH.Core;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class ObjectManger {
 	private static ObjectManger instance;
-	private static List<GameObject> objects;
+	private static ArrayList<GameObject> objects;
 	
 	private ObjectManger() {
 		
 	}
 	
-	public static void Create() {
+	@SuppressWarnings("unused")
+	private static void Create() {
 		if(instance == null) {
 			instance = new ObjectManger();
 		}
@@ -25,24 +25,34 @@ public class ObjectManger {
 		Destroy();
 	}
 	
-	public static void Destroy()
+	private static void Destroy()
 	{
-
-	}
-	
-	public static void Start() {
 		for(int i = 0; i < objects.size(); i++) {
-			objects.get(i).Start();
+			objects.get(i).Destroy();
+			objects.remove(i);
 		}
 	}
 	
-	public static void Update() {
+	@SuppressWarnings("unused")
+	private static void Start() {
 		for(int i = 0; i < objects.size(); i++) {
-			objects.get(i).Update();
+			if(objects.get(i).IsEnabled()) {
+				objects.get(i).Start();				
+			}
 		}
 	}
 	
-	public static void AddObject(GameObject object) {
+	@SuppressWarnings("unused")
+	private static void Update() {
+		for(int i = 0; i < objects.size(); i++) {
+			if(objects.get(i).IsEnabled()) {
+				objects.get(i).Update();				
+			}
+		}
+	}
+	
+	@SuppressWarnings("unused")
+	private static void AddObject(GameObject object) {
 		for(int i = 0; i < objects.size(); i++) {
 			if(object.name == objects.get(i).name) {
 				return;				
@@ -52,7 +62,8 @@ public class ObjectManger {
 		objects.add(object);
 	}
 	
-	public static GameObject GetObject(String name) {
+	@SuppressWarnings("unused")
+	private static GameObject GetObject(String name) {
 		for(int i = 0; i < objects.size(); i++) {
 			if(name == objects.get(i).name) {
 				return objects.get(i);
@@ -62,9 +73,11 @@ public class ObjectManger {
 		return null;
 	}
 	
-	public static void RemoveObject(String name) {
+	@SuppressWarnings("unused")
+	private static void RemoveObject(String name) {
 		for(int i = 0; i < objects.size(); i++) {
 			if(name == objects.get(i).name) {
+				objects.get(i).Destroy();
 				objects.remove(i);
 			}
 		}

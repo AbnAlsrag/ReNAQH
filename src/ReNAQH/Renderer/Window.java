@@ -1,12 +1,12 @@
 package ReNAQH.Renderer;
 
-import java.nio.ByteBuffer;
 import java.nio.IntBuffer;
 
 import org.lwjgl.BufferUtils;
 import org.lwjgl.glfw.GLFW;
 import org.lwjgl.opengl.GL;
 import org.lwjgl.opengl.GL40;
+
 import ReNAQH.Math.Vector2;
 
 public class Window {
@@ -14,16 +14,13 @@ public class Window {
 	private static long window;
 	private static String title;
 	private static int width, height;
-	private static int frames, currentFrames;
-	private static long time;
 
 	private static IntBuffer widthBuffer = BufferUtils.createIntBuffer(1), heightBuffer = BufferUtils.createIntBuffer(1);
 
 	private Window(String title, int width, int height) {
-		this.title = title;
-		this.width = width;
-		this.height = height;
-		time = System.currentTimeMillis();
+		Window.title = title;
+		Window.width = width;
+		Window.height = height;
 
 		GLFW.glfwInit();
 		GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE);
@@ -31,7 +28,7 @@ public class Window {
 		window = GLFW.glfwCreateWindow(width, height, title, 0, 0);
 		GLFW.glfwMakeContextCurrent(window);
 		GL.createCapabilities();
-		GLFW.glfwSwapInterval(1);
+		GLFW.glfwSwapInterval(0);
 		GLFW.glfwShowWindow(window);
 		GLFW.glfwSetInputMode(window, GLFW.GLFW_STICKY_KEYS, 1);
 	}
@@ -52,20 +49,12 @@ public class Window {
 	}
 
 	public static void Update() {
-		frames++;
-		
 		GLFW.glfwGetWindowSize(window, widthBuffer, heightBuffer);
 		
 		width = widthBuffer.get(0);
 		height = heightBuffer.get(0);
 		
 		GL40.glViewport(0, 0, width, height);
-		
-		if(System.currentTimeMillis() > time + 1000) {
-			currentFrames = frames;
-			time = System.currentTimeMillis();
-			frames = 0;
-		}
 	}
 
 	public static void SwapBuffer() {
@@ -86,10 +75,6 @@ public class Window {
 
 	public static Vector2 GetSize() {
 		return new Vector2(width, height);
-	}
-
-	public static int GetFrames() {
-		return currentFrames;
 	}
 	
 	public static long GetWindowHandel() {

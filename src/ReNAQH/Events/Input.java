@@ -1,4 +1,4 @@
-package ReNAQH.Core;
+package ReNAQH.Events;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;

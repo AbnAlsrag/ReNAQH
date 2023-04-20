@@ -1,11 +1,5 @@
 package ReNAQH.Renderer;
 
-import java.nio.FloatBuffer;
-import java.nio.IntBuffer;
-
-import org.lwjgl.opengl.GL40;
-import org.lwjgl.system.MemoryUtil;
-
 public class Mesh {	
 	private Vertex[] vertices;
 	private int[] indices;

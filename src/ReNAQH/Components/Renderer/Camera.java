@@ -1,13 +1,14 @@
-package ReNAQH.Renderer;
+package ReNAQH.Components.Renderer;
 
 import org.joml.Matrix4f;
 import org.joml.Vector2f;
 import org.joml.Vector3f;
 import org.joml.Vector4f;
 
+import ReNAQH.Core.Component;
 import ReNAQH.Math.Vector2;
 
-public class Camera {
+public class Camera extends Component {
     private Matrix4f projectionMatrix, viewMatrix, inverseProjection, inverseView;
     public Vector2f position;
 
@@ -18,8 +19,8 @@ public class Camera {
 
     private float zoom = 1.0f;
 
-    public Camera(Vector2f position) {
-        this.position = position;
+    public Camera() {
+        this.position = new Vector2f();
         this.projectionMatrix = new Matrix4f();
         this.viewMatrix = new Matrix4f();
         this.inverseProjection = new Matrix4f();

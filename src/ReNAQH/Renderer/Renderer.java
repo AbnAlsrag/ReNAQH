@@ -1,11 +1,13 @@
 package ReNAQH.Renderer;
 
+import java.util.ArrayList;
+
 import org.lwjgl.opengl.GL40;
 
 public class Renderer {
 	private static Renderer instance;
 	private static Color backColor = new Color(1.0f, 1.0f, 1.0f);
-	
+
 	private Renderer() {
 		
 	}

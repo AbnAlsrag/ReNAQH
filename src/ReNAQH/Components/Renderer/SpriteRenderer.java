@@ -3,6 +3,7 @@ package ReNAQH.Components.Renderer;
 import org.joml.Matrix4f;
 
 import ReNAQH.Core.Component;
+import ReNAQH.Events.Signal;
 import ReNAQH.Math.Vector2;
 import ReNAQH.Math.Vector3;
 import ReNAQH.Renderer.Mesh;
@@ -26,14 +27,13 @@ public class SpriteRenderer extends Component {
 	private Mesh mesh = new Mesh(vertices, indices, "res/Shaders/vertex.glsl", "res/Shaders/fragment.glsl");
 	Matrix4f matrix = new Matrix4f().scale(0.4f, 0.4f, 0.4f);
 	
-	@Override
 	public void Start() {
 		mesh.SetTexture(texture);
 	}
 
-	@Override
 	public void Update() {
 		mesh.GetShader().SetMatrix4("transform", matrix);
 		Renderer.RenderMesh(mesh);
 	}
+	
 }
